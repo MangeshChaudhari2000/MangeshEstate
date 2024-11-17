@@ -1,18 +1,22 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { MdLocationOn } from "react-icons/md";
-
+import { motion } from "framer-motion";
 export default function ListingItem({ listing }) {
   return (
-    <div className="bg-white w-full sm:w-[22vw] shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg">
+    <motion.div
+    initial={{ scale:1 }}
+    whileHover={{ scale: 1.05 }}
+    transition={{ duration: .15 }}
+    className="bg-white w-full md:w-[22vw] shadow-md hover:shadow-lg transition-shadow overflow-hidden rounded-lg">
       <Link to={`/listing/${listing._id}`}>
-        <img
+        <motion.img
           src={
             listing.imageUrls[0] ||
             "https://cdn-icons-png.flaticon.com/128/619/619032.png"
           }
           alt="listingCover"
-          className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-105 transition-scale duration-300"
+          className="h-[320px] sm:h-[220px] w-full object-cover hover:scale-110 transition-scale duration-300"
         />
 
         <div className="p-3 flex flex-col gap-2 w-full">
@@ -50,6 +54,6 @@ export default function ListingItem({ listing }) {
           </div>
         </div>
       </Link>
-    </div>
+    </motion.div>
   );
 }
