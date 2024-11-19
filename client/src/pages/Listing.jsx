@@ -17,10 +17,11 @@ import {
 import Contact from "../components/Contact";
 import { motion } from "framer-motion";
 import { Autoplay } from "swiper/modules";
-
+import { useNavigate } from "react-router-dom";
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
 
 export default function Listing() {
+  const navigate=useNavigate();
   SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -36,8 +37,11 @@ export default function Listing() {
         setLoading(true);
         const res = await fetch(`/api/listing/get/${params.listingId}`);
         const data = await res.json();
+        if(data.success===false && data.statusCode===401){
+          navigate("/sign-in");
+        }else
         if (data.success === false) {
-          setError(true);
+          setError(data.message);
           setLoading(false);
           return;
         }
@@ -56,7 +60,7 @@ export default function Listing() {
     <main>
       {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
       {error && (
-        <p className="text-center my-7 text-2xl">Something went wrong!</p>
+        <p className="text-center my-7 text-2xl"> {error}</p>
       )}
       {listing && !loading && !error && (
         <div>

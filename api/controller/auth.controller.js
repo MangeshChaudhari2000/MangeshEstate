@@ -35,14 +35,13 @@ export const signin = async (req, res, next) => {
 
     } catch (error) {
         console.log(error);
-
         next(error)
     }
 }
 
 export const signOut = async (req, res, next) => {
     try {
-        res.clearCookie('access_cookie');
+        res.clearCookie('access_token');
         res.status(200).json("User has been logged out!")
     } catch (error) {
         next(error);
@@ -62,7 +61,7 @@ export const google = async (req, res, next) => {
             console.log("rest old user");
             console.log(rest);
 
-            res.cookie('access_token', token, { httpOnly: true })
+            res.cookie('access_token', token, { httpOnly: true,maxAge: 60 * 60 * 1000 })
                 .status(200)
                 .json(rest)
 
@@ -82,7 +81,7 @@ export const google = async (req, res, next) => {
             console.log("rest new user");
             console.log(rest);
 
-            res.cookie('access_token', token, { httpOnly: true })
+            res.cookie('access_token', token, { httpOnly: true,maxAge: 60 * 60 * 1000 })
                 .status(200)
                 .json(rest)
         }
