@@ -88,8 +88,8 @@ export default function Home() {
       >
         {offerListings &&
           offerListings.length > 0 &&
-          offerListings.map((listing) => (
-            <SwiperSlide>
+          offerListings.map((listing,index) => (
+            <SwiperSlide key={index}>
               <div
                 style={{
                   background: `url(${listing.imageUrls[0]}) center no-repeat`,
@@ -121,6 +121,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-4">
               {offerListings.map((listing, index) => (
                 <motion.div
+                  key={index}
                   initial={{ opacity: 0 }}
                   whileInView={{ opacity: 1 }}
                   transition={{ duration: 1, delay: 0.5 * index }}
@@ -150,6 +151,7 @@ export default function Home() {
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, delay: 0.5 * index }}
+                  key={index}
                 >
                   <ListingItem listing={listing} key={listing._id} />
                 </motion.div>
@@ -173,6 +175,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-4">
               {saleListings.map((listing, index) => (
                 <motion.div
+                key={index}
                   initial={{ opacity: 0, scale: 0.8 }}
                   whileInView={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 1, delay: 0.5 * index }}
