@@ -10,6 +10,8 @@ import { app } from "../firebase";
 import { userAction } from "../redux/user/userSlice.js";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -19,7 +21,6 @@ export default function Profile() {
   const [fileUploadError, setFileUploadError] = useState(false);
   const [formData, setFormData] = useState({});
   const [showListingsError, setShowListingsError] = useState(false);
-  const [UserListing, setUserListing] = useState([]);
   const {
     updateUserStart,
     updateUserSuccess,
@@ -32,7 +33,7 @@ export default function Profile() {
     signOutFailure,
   } = userAction;
   const dispatch = useDispatch();
-
+const navigate=useNavigate();
   // firebase storage
   // allow read;
   // allow write: if
@@ -140,38 +141,10 @@ export default function Profile() {
   };
 
   const handleShowListing = async () => {
-    try {
-      setShowListingsError(false);
-      const res = await fetch(`/api/user/listings/${currentUser._id}`);
-      const data = await res.json();
-      if (data.success === false) {
-        return setShowListingsError(data.message);
-      }
-      setUserListing(data);
-    } catch (error) {
-      setShowListingsError(error.message);
-    }
+    return navigate("/showListing")
   };
 
-  const handleListDelete = async (listingId) => {
-    try {
-      const res = await fetch(`/api/listing/delete/${listingId}`, {
-        method: "DELETE",
-      });
-
-      const data = await res.json();
-
-      if (data.success === false) {
-        return setShowListingsError(data.message);
-      }
-
-      setUserListing((prev) =>
-        prev.filter((listing) => listing._id !== listingId)
-      );
-    } catch (error) {
-      return setShowListingsError(error.message);
-    }
-  };
+ 
 
   return (
     <div className="p-3 max-w-lg mx-auto">
@@ -268,46 +241,7 @@ export default function Profile() {
       <p className="text-red-700 mt-5">
         {showListingsError ? showListingsError : ""}
       </p>
-      {UserListing && UserListing.length > 0 && (
-        <div className="flex flex-col gap-4">
-          <h1 className="text-center mt-7 text-2xl font-semibold">
-            Your Listings
-          </h1>
-          {UserListing.map((listing) => (
-            <div
-            className="flex justify-between"
-              key={listing._id}
-            >
-              <Link
-                className="border rounded-lg p-3 flex justify-between items-center gap-4"
-                key={listing._id}
-                to={`/listing/${listing._id}`}
-              >
-                <img
-                  className="h-16 w-16 object-contain"
-                  src={listing.imageUrls[0]}
-                  alt="listingCover"
-                />
-                <p className="text-slate-700 font-semibold flex-1 hover:underline truncate">
-                  {listing.name}
-                </p>
-              </Link>
-              <div className="flex flex-col items-center">
-                <button
-                  type="button"
-                  onClick={() => handleListDelete(listing._id)}
-                  className="text-red-700 uppercase"
-                >
-                  Delete
-                </button>
-                <Link to={`/update-listing/${listing._id}`}>
-                <button className="text-greem-700 uppercase">Edit</button>
-                </Link>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+     
     </div>
   );
 }

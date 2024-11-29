@@ -6,7 +6,10 @@ import mongoose from "mongoose";
 import cookieParser from "cookie-parser";
 import userRouter from "./routes/user.route.js";
 import authRouter from "./routes/auth.route.js";
-import listingRouter from './routes/listing.route.js'
+import listingRouter from './routes/listing.route.js';
+import bodyParser from "body-parser"
+import cors from "cors";
+import Stripe from "stripe";
 import path from 'path';
 mongoose.connect(process.env.MONGO).then(() => {
     console.log("connected to DB");
@@ -16,7 +19,8 @@ mongoose.connect(process.env.MONGO).then(() => {
 
 const __direname = path.resolve();
 const app = express();
-
+app.use(cors());
+app.use(bodyParser.json());
 app.use(express.json());
 app.use(cookieParser());
 app.listen(3000, () => {

@@ -15,11 +15,31 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    avatar:{
-        type:String,
-        default:"https://cdn-icons-png.flaticon.com/128/1077/1077012.png"
-    }
+    avatar: {
+        type: String,
+        default: "https://cdn-icons-png.flaticon.com/128/1077/1077012.png"
+    },
+    availableListing: {
+        type: Number,
+        default: 1
+    },
+    contactOwner: {
+        remainingContact: {
+            type: Number,
+            default: 3,
+        },
+        contactedOwner: [
+            {
+                type: mongoose.SchemaTypes.ObjectId,
+                ref: "Listing",
+            },
+        ],
+    },
+
+
+
+
 }, { timestamps: true });
 
-const User=mongoose.model('User',userSchema);
+const User = mongoose.model('User', userSchema);
 export default User;

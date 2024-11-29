@@ -19,15 +19,18 @@ import { motion } from "framer-motion";
 import { Autoplay } from "swiper/modules";
 import { useNavigate } from "react-router-dom";
 // https://sabe.io/blog/javascript-format-numbers-commas#:~:text=The%20best%20way%20to%20format,format%20the%20number%20with%20commas.
+import axios from "axios";
 
 export default function Listing() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   SwiperCore.use([Navigation]);
   const [listing, setListing] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(false);
   const [copied, setCopied] = useState(false);
   const [contact, setContact] = useState(false);
+  const [contactError, setContactError] = useState(null);
+
   const params = useParams();
   const { currentUser } = useSelector((state) => state.user);
 
@@ -37,10 +40,9 @@ export default function Listing() {
         setLoading(true);
         const res = await fetch(`/api/listing/get/${params.listingId}`);
         const data = await res.json();
-        if(data.success===false && data.statusCode===401){
+        if (data.success === false && data.statusCode === 401) {
           navigate("/sign-in");
-        }else
-        if (data.success === false) {
+        } else if (data.success === false) {
           setError(data.message);
           setLoading(false);
           return;
@@ -56,18 +58,40 @@ export default function Listing() {
     fetchListing();
   }, [params.listingId]);
 
+  const handleContactOwner = async () => {
+    setContactError(null);
+    try {
+      const contactAvailableCall = await axios
+        .get(`/api/listing/contactOwnerVerify/${params.listingId}`)
+        .then((d) => {
+          console.log(d);
+
+          setContact(d.data.remainingContact);
+          setContactError(false);
+        })
+        .catch((err) => {
+          console.log(err.response.data);
+          if (err.response.data.statusCode === 500) {
+            setContactError("Technical error please try again!");
+          } else if (err.response.data.statusCode === 400) {
+            setContactError(err.response.data.message);
+          }
+        });
+    } catch (error) {
+      setContactError("error:" + error.message);
+    }
+  };
   return (
     <main>
       {loading && <p className="text-center my-7 text-2xl">Loading...</p>}
-      {error && (
-        <p className="text-center my-7 text-2xl"> {error}</p>
-      )}
+      {error && <p className="text-center my-7 text-2xl"> {error}</p>}
       {listing && !loading && !error && (
         <div>
-          <Swiper navigation
-          modules={[Autoplay]}
-          autoplay={{delay:2500, disableOnInteraction:true}}
-          loop={true}
+          <Swiper
+            navigation
+            modules={[Autoplay]}
+            autoplay={{ delay: 2500, disableOnInteraction: true }}
+            loop={true}
           >
             {listing.imageUrls.map((url) => (
               <SwiperSlide key={url}>
@@ -153,12 +177,14 @@ export default function Listing() {
             </ul>
             {currentUser && listing.userRef != currentUser._id && !contact && (
               <button
-                onClick={() => setContact(true)}
+                onClick={handleContactOwner}
                 className="bg-slate-700 text-white rounded-lg uppercase hover:opacity-95 p-3"
               >
                 Contact landlord
               </button>
             )}
+            {contactError && <h1>{contactError}</h1>}
+            {contact && <h1>Remaining Contact: {contact}</h1>}
             {contact && <Contact listing={listing} />}
           </div>
         </div>

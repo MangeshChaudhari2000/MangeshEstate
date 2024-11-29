@@ -12,6 +12,10 @@ import CreateListing from "./pages/CreateListing";
 import UpdateListing from "./pages/updateListing";
 import Listing from "./pages/Listing";
 import Search from "./pages/Search";
+import Plans from "./pages/Plans";
+import Payment from "./pages/Payment";
+import ShowListing from "./pages/ShowListing";
+
 const App = () => {
   return (
     <BrowserRouter>
@@ -26,10 +30,13 @@ const App = () => {
         <Route element={<PrivateRoute />}>
           <Route path="/profile" element={<Profile />} />
           <Route path="/create-listing" element={<CreateListing />} />
+          <Route path="/plans" element={<Plans />} />
+          <Route path="/payment/:amount" element={<Payment />} />
           <Route
             path="/update-listing/:listingId"
             element={<UpdateListing />}
           />
+          <Route path="/showListing" element={<ShowListing />} />
         </Route>
       </Routes>
       <Toaster />

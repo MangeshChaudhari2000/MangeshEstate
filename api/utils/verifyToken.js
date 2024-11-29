@@ -3,7 +3,7 @@ import jwt from 'jsonwebtoken';
 
 export const verifyToken = (req, res, next) => {
     // console.log("verifyToken called");
-    
+
     const token = req.cookies.access_token;
 
     if (!token) {
@@ -15,6 +15,7 @@ export const verifyToken = (req, res, next) => {
                 return next(errorHandler(403, 'Forbidden'))
             }
             req.user = user;
+
             next();
         })
     } catch (error) {
